@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+<div class="container">
+    <div class="container">
+        <h1>Motion Dataset Search</h1>
+    </div>
+
+    <hr>
+    <div class="container">
+        <button type="button" class="btn btn-primary" onclick="location.href='/'">
+            Return to /
+        </button>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="kv">
+            <span class="key"># sequences:</span>
+            <span class="value">{{ num_sequences }}</span>
+        </div>
+        <div class="kv">
+            <span class="key"># frames:</span>
+            <span class="value">{{ num_frames }}</span>
+        </div>
+    </div>
+
+    <hr>
+    <div class="container">
+        <span class="help">Every sequence in the dataset.</span>
+        {% for sequence in sequences %}
+        <div>
+            <span class="key">{{ loop.index }}</span>
+            <br>
+            <span class="value">name={{ sequence.0 }} </span>
+            <br>
+
+        </div>
+        {% endfor %}
+    </div>
+
+<div class='footer-space'></div>
+{% endblock %}

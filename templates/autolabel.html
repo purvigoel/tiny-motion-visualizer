@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+<div class="container">
+    <div class="container">
+        <h1>Motion Dataset Search</h1>
+    </div>
+
+    <hr>
+    <div class="container">
+        <button type="button" class="btn btn-primary" onclick="location.href='/'">
+            Return to /
+        </button>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="kv">
+            <span class="key">Go from </span>
+            <span class="value">{{ subject_a }}</span>
+        </div>
+        <div class="kv">
+            <span class="key"> to :</span>
+            <span class="value">{{ subject_b }}</span>
+        </div>
+    </div>
+
+    <hr>
+    <div class = "container">
+	<div>
+	    <p> subject {{ subject_a }} // subject {{ subject_b }} </p>
+	    <img src="/data/video-gif/{{ subject_a_vid }}/{{ subject_a_start }}/{{ subject_a_end }}" style="max-width: 50%;">
+	    <img src="/data/video-gif/{{ subject_b_vid }}/{{ subject_b_start }}/{{ subject_b_end }}" style="max-width: 50%;">
+	    <br>
+	    <img src = "/data/video-gif/{{subject_a_vid_smpl}}/{{subject_a_keyframe0}}/{{subject_a_keyframe0 + 1}}" style="max-width: 50%;">
+	    <img src = "/data/video-gif/{{subject_b_vid_smpl}}/{{subject_b_keyframe0}}/{{subject_b_keyframe0 + 1}}" style="max-width: 50%;">
+	    <img src = "/data/video-gif/{{subject_a_vid_smpl}}/{{subject_a_keyframe1}}/{{subject_a_keyframe1 + 1}}" style="max-width: 50%;">
+	    <img src = "/data/video-gif/{{subject_b_vid_smpl}}/{{subject_b_keyframe1}}/{{subject_b_keyframe1 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_a_vid_smpl}}/{{subject_a_keyframe2}}/{{subject_a_keyframe2 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_b_vid_smpl}}/{{subject_b_keyframe2}}/{{subject_b_keyframe2 + 1}}" style="max-width: 50%;">
+	    <img src = "/data/video-gif/{{subject_a_vid_smpl2}}/{{subject_a_keyframe0}}/{{subject_a_keyframe0 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_b_vid_smpl2}}/{{subject_b_keyframe0}}/{{subject_b_keyframe0 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_a_vid_smpl2}}/{{subject_a_keyframe1}}/{{subject_a_keyframe1 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_b_vid_smpl2}}/{{subject_b_keyframe1}}/{{subject_b_keyframe1 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_a_vid_smpl2}}/{{subject_a_keyframe2}}/{{subject_a_keyframe2 + 1}}" style="max-width: 50%;">
+            <img src = "/data/video-gif/{{subject_b_vid_smpl2}}/{{subject_b_keyframe2}}/{{subject_b_keyframe2 + 1}}" style="max-width: 50%;">
+
+            <br>
+
+        </div>
+
+    </div>
+    <div class="container">
+        <span class="help">Rule-based instructions.</span>
+        {% for instr in instructions %}
+        <div>
+            <span class="key">{{ loop.index }}</span>
+            
+            <span class="value">{{ instr }} </span>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="container">
+        <span class="help">Chat GPT-based instructions.</span>
+	{% for instr in text_responses %}
+        <div>
+            <span class="key">{{ loop.index }}</span>
+	    <span class="value"><b> {{ instructions[loop.index - 1] }} </b></span>
+	    <br>
+	    {% for ex in instr %}
+            	<span class="value">{{ ex }} </span>
+		<br>
+            {% endfor %}
+	</div>
+        {% endfor %}
+    </div>
+<div class='footer-space'></div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="container">
+        <h1>Motion Dataset Search</h1>
+    </div>
+
+    <hr>
+    <div class="container">
+        <button type="button" class="btn btn-primary" onclick="location.href='/list'">
+            Return to list page
+        </button>
+        <button type="button" class="btn btn-primary" onclick="location.href='/gallery'">
+            Return to gallery page
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="go_prev();">
+            Previous
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="go_next()">
+            Next
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="go_rand();">
+            Random
+        </button>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="kv">
+            <span class="key">Sequence ID:</span>
+            <span class="value">{{ id }}</span>
+        </div>
+        <div class="kv">
+            <span class="key"># frames:</span>
+            <span class="value">{{ num_frames }}</span>
+        </div>
+        <div class="kv">
+            <span class="key">FPS:</span>
+            <span class="value">{{ fps }}</span>
+        </div>
+    </div>
+
+    <hr>
+    <div class="container">
+
+        <!-- <span class="help">This is the 3D data. Fill me with stuff.</span>-->
+        <div id = "explore"></div>
+    </div>
+
+<div class='footer-space'></div>
+{% endblock %}
+
+{% block code %}
+<script>
+    function go_prev() { location.href='/sequence/{{ prev_sequence }}'; }
+    function go_next() { location.href='/sequence/{{ next_sequence }}'; }
+    function go_rand() { location.href='/sequence/{{ rand_sequence }}'; }
+</script>
+
+<script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three/examples/jsm/",
+                "SelectionBox": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionBox.js",
+                "SelectionHelper": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionHelper.js",
+                "FirstPersonControls": "https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/controls/FirstPersonControls.js",
+                "dat.gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js"
+            }
+        }
+</script>
+
+<script src="{{ url_for('static', filename='viewer.js') }}" type="module"></script>
+<script type="module">
+import {Viewer} from "/static/viewer.js";
+
+var viewer = new Viewer();
+viewer.set_up_scene_visual(true);
+viewer.set_up_data();
+
+$.get('/data/sequence/{{ id }}', function(data) {
+    console.log(data)
+    viewer.load([data]);
+	viewer.serve();
+});
+</script>
+{% endblock %}

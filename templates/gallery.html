@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="container">
+    </div>
+
+    <hr>
+    <div class="container">
+        <p> <span style="color:red">Input Motion</span> &emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;After Initial Edit &emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Stitch Limb onto Input (Naively) &emsp;&emsp; &emsp;&emsp;&emsp;<span style="color:blue">Cleanup with Diffusion</span></p>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="kv">
+            <span class="key"># sequences:</span>
+            <span class="value">{{ num_sequences }}</span>
+        </div>
+        <div class="kv">
+            <span class="key"># frames:</span>
+            <span class="value">{{ num_frames }}</span>
+        </div>
+        <div class="kv">
+            <span class="key"># samples shown:</span>
+            <span class="value">{{ sequences | length }}</span>
+        </div>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div style="position:absolute; width:80%; height:120%; display: block;" id = "explore">
+                {% for i in range(0, num) %}
+                    <div style="position:absolute; top:100px" id = "{{ i }}"> </div>
+                {% endfor %}
+        </div>
+    </div>
+
+<div class='footer-space'></div>
+{% endblock %}
+
+{% block code %}
+
+<script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three/examples/jsm/",
+                "SelectionBox": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionBox.js",
+                "SelectionHelper": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionHelper.js",
+                "FirstPersonControls": "https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/controls/FirstPersonControls.js",
+                "dat.gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js"
+            }
+        }
+</script>
+
+<script src="{{ url_for('static', filename='viewer.js') }}" type="module"></script>
+
+<script type="module">
+import {Viewer} from "/static/viewer.js";
+
+
+$.get('/gallery', function(data) {
+	var viewer = new Viewer();
+
+	viewer.set_up_scene_visual(false);
+        viewer.set_up_data();
+
+	var sample_names = [];
+	var num_sequences = {{ num }};
+	console.log(num_sequences);
+	for(var i = 0; i < num_sequences; i++){
+		var sample = i
+		sample_names.push(sample);
+	}
+	console.log(sample_names)
+	let requests = sample_names.map(name => fetch('/data/sequence/' + name));
+
+	let ret = Promise.all(requests).then(values =>
+		Promise.all(values.map(value => value.json()))
+        )
+
+        ret.then( function(result) {
+            let results_squeezed = [];
+            for(var i = 0; i < result.length; i++){
+                results_squeezed.push(result[i][0]);
+            }
+            viewer.load(results_squeezed);
+        })
+	.then(viewer.serve());
+
+        for(var i = 0; i < {{ num }}; i ++ ){
+             if(i % 4 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid red";}
+             if( (i + 1) % 4 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid blue";
+             }
+        }
+});
+</script>
+
+{% endblock %}

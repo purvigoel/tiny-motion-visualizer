@@ -1,0 +1,97 @@
+import {SceneWrapper} from "./scenewrapper.js"
+import {ThreeWrapper} from "./threewrapper.js";
+import {VisualExplorer_Gallery} from './visual_explorer_gallery.js';
+
+var FRAMES = 100;
+var numvis = 1;
+var scenewrapper = 0;
+var clusterwrapper = null;
+var canvas = 0;
+var threewrapper = 0;
+var clusters = 0;
+var scene_width = -1;
+var scene_height = -1;
+
+var visual_explorer_gallery = null;
+
+export class Viewer {
+constructor() {
+	console.log("here")
+}
+
+onKeyPress(event){
+	
+	event = event || window.event;
+	
+	if(event.keyCode == 80){ // P
+		keyhandler.pause();
+	} else if(event.keyCode == 13 || event.keyCode == 16){
+		keyhandler.toggle_shift_down_gallery();
+	}
+
+}
+
+onKeyPressCluster(event){
+	if(event.keyCode == 13 || event.keyCode == 16){
+		keyhandler2.toggle_shift_down();
+	}
+}
+
+onKeyUpCluster(event){
+	if(event.keyCode == 13 || event.keyCode == 16){
+		keyhandler2.toggle_shift_up();
+	}
+}
+
+onKeyUpGallery(event){
+	if(event.keyCode == 13 || event.keyCode == 16){
+		keyhandler.toggle_shift_up_gallery();
+	}
+}
+
+set_up_scene_visual(is_single){
+	threewrapper = new ThreeWrapper(scene_width, scene_height);
+	visual_explorer_gallery = new VisualExplorer_Gallery(0,0, is_single);
+	
+}
+
+
+set_up_data(scene_width, scene_height, numvis){
+	scenewrapper = new SceneWrapper(scene_width, scene_height, numvis, FRAMES, false, threewrapper);
+//	scenewrapper.make_motion_sample(scenewrapper, data, numvis, visual_explorer_gallery);
+
+}
+
+load(data) {
+ scenewrapper.make_motion_sample(scenewrapper, data, numvis, visual_explorer_gallery);
+}
+
+serve(data, is_single){
+	scene_width = 300;
+	scene_height = 300;
+
+	set_up_scene_visual(is_single);
+	set_up_data(data.pose, scene_width, scene_height, 1);
+	
+	var fps = 30;
+	var fpsInterval = 1000 / fps;
+	var then = Date.now();
+	var startTime = then;
+	var proceed = true;
+
+        
+	function animate() {
+		requestAnimationFrame( animate );
+		
+                var now = Date.now();
+		var elapsed = now - then;
+		if ( elapsed > fpsInterval && proceed ) {
+			then = now - (elapsed % fpsInterval);
+			visual_explorer_gallery.step();
+		}
+	};
+	animate();
+
+}
+
+}

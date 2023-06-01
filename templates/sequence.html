@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+<div class="container">
+    <div class="container">
+        <h1>Motion Dataset Search</h1>
+    </div>
+
+    <hr>
+    <div class="container">
+        <button type="button" class="btn btn-primary" onclick="location.href='/'">
+            Return to /
+        </button>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="kv">
+            <span class="key"># sequences:</span>
+            <span class="value">{{ num_sequences }}</span>
+        </div>
+        <div class="kv">
+            <span class="key"># frames:</span>
+            <span class="value">{{ num_frames }}</span>
+        </div>
+    </div>
+    <div class="container">
+        <!-- <span class="help">This is the 3D data. Fill me with stuff.</span>-->
+        <div style="position:absolute; width:70%; height:120%; display: block;" id = "explore">
+		{% for i in range(0, num) %}
+		 <div style="position:absolute; top:100px" id = "{{ i }}"> </div> 
+		{% endfor %} 
+	</div>
+
+    </div>
+    <hr>
+<div class='footer-space'></div>
+
+<script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three/examples/jsm/",
+                "SelectionBox": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionBox.js",
+                "SelectionHelper": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionHelper.js",
+                "FirstPersonControls": "https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/controls/FirstPersonControls.js",
+                "dat.gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js"
+            }
+        }
+</script>
+
+<script src="{{ url_for('static', filename='viewer.js') }}" type="module"></script>
+<script type="module">
+import {Viewer} from "/static/viewer.js";
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === "Space") {
+	console.log("spacebar")
+        viewer.log_spacebar();
+	e.preventDefault();
+	return;   
+    } else if (e.code === "KeyC") {
+	viewer.clear_list();
+	e.preventDefault();
+	return;
+    } else if(e.code === "KeyR") {
+	viewer.restart();
+	e.preventDefault();
+	return;
+    }
+});
+
+
+var viewer = new Viewer();
+viewer.set_up_scene_visual(false);
+viewer.set_up_data();
+$.get('/data/sequence/{{index}}', function(data) {
+    viewer.load(data);
+    viewer.serve();
+console.log(data)
+});
+</script>
+
+{% endblock %}

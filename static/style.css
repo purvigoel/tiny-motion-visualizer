@@ -1,0 +1,74 @@
+h1 {
+    padding-top: 10px;
+}
+
+div.kv {
+    display: inline-block;
+}
+span.key {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 10px;
+}
+span.index {
+    display: inline-block;
+    width: 30px;
+    margin-right: 10px;
+}
+span.value {
+    display: inline-block;
+    margin-right: 10px;
+}
+span.red {
+    color: red;
+}
+span.help {
+    font-style: italic;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+div.lblock {
+    margin-bottom: 10px;
+}
+
+div.vblock {
+    width: 31%;
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    outline: solid 1px #000;
+    overflow-x: hidden;
+}
+div.vblock div.inline img {
+    max-width: 100%;
+}
+div.vblock div.inline {
+    margin-right: 5px;
+    display: inline-block;
+}
+div.vblock div.inline video {
+    max-width: 100%;
+}
+
+div.overlay-top-right {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    background: #fff;
+}
+
+div.footer-space {
+    height: 100px;
+}
+
+#explore {
+    position:absolute;
+    height: 40%;
+    top:10%;
+    width:40%;
+    background: #F8F8F8;
+    overflow-y:auto;
+}
