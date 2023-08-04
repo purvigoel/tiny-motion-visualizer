@@ -1,12 +1,14 @@
 import {GalleryRenderer} from './gallery_renderer.js';
 export class VisualExplorer_Gallery {
-	constructor(width, height, is_single){
+	constructor(width, height, is_single, camloc){
 		this.width = width;
 		this.height = height;
+                this.camloc = camloc;
+                console.log(this.camloc);
 		is_single = false;
 		this.is_single = is_single;
 		this.div = document.getElementById("explore");
-		this.gallery_renderer = new GalleryRenderer("explore-gallery");
+		this.gallery_renderer = new GalleryRenderer("explore-gallery", camloc);
 		this.samples = [];
 	}
 	
@@ -73,7 +75,7 @@ export class VisualExplorer_Gallery {
 		var counter = 0;
 		var divs = [];
 		var render_info = [];
-
+                this.gallery_renderer.camloc = this.camloc;
 		//var total = samples.length
 		//total = Math.min(total, 16);
 		//var gallery_rows = Math.ceil(Math.sqrt(total));

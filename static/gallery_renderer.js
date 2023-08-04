@@ -14,9 +14,10 @@ import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { CopyShader } from 'three/addons/shaders/CopyShader.js';
 
 export class GalleryRenderer {
-	constructor(div_attr, sample_attr) {
+	constructor(div_attr, sample_attr, camloc) {
 		this.pause = false;
 		this.visible_samples = [];
+                this.camloc = camloc;
 		this.sceneObjects = [];
 		this.sceneElements = [];
 		this.div_attr = div_attr;
@@ -106,10 +107,17 @@ export class GalleryRenderer {
 		this.pause = false;
 	}
 
-	addScene(elem, fn) {
+	addScene(elem, fn, label) {
 	    const ctx = document.createElement('canvas').getContext('2d');
 	    elem.appendChild(ctx.canvas);
-	    this.sceneElements.push({elem, ctx, fn});
+
+            var para = document.createElement("p");
+	    para.innerHTML = label;
+            para.style.position="absolute";
+            para.style.zIndex = "1";
+            para.style.top = 0;
+            elem.appendChild(para)
+            this.sceneElements.push({elem, ctx, fn});
 	}
 
 	add_scene_gallery(){
@@ -119,7 +127,7 @@ export class GalleryRenderer {
 			const sceneName = "single";
 		    const sceneInitFunction = this.sceneInitFunctionsByName[sceneName];
 		    const sceneRenderFunction = sceneInitFunction(elem, this.visible_samples[i]);
-		    global.addScene(elem, sceneRenderFunction);
+		    global.addScene(elem, sceneRenderFunction, this.visible_samples[i].label);
 
 		});
 	}
@@ -185,7 +193,7 @@ export class GalleryRenderer {
 			    ctx.drawImage(img,
 				    0, 0, img.width, img.height,  // src rect
 		            0, 0, width, height);
-			} 
+		} 
 	      }
 	    }
 	}
@@ -228,12 +236,11 @@ export class GalleryRenderer {
 	    const fov = 45;
 	    const aspect = 1;  // the canvas default
 	    const near = 0.1;
-	    const far = 10;
+	    const far = 20;
 	    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 	    //camera.position.set(0, 1, 6.0);
 	    //camera.lookAt(0, 1, 0);
-            console.log(sample.centerx, sample.centery, sample.centerz);
-            camera.position.set( sample.centerx, sample.centery , sample.centerz + 6);
+            camera.position.set( sample.centerx, sample.centery , sample.centerz + this.camloc);
             camera.lookAt(sample.centerx, sample.centery, sample.centerz);
 
 	    scene.add(camera);

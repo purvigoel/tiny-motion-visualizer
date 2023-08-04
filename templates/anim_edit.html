@@ -29,7 +29,7 @@
     <div class="container">
         <div style="position:absolute; width:80%; height:120%; display: block;" id = "explore">
                 {% for i in range(0, num) %}
-                    <div style="position:absolute; top:100px" id = "{{ i }}"> </div>
+                    <div style="position:absolute; top:100px; z-index:100;" id = "{{ i }}"> </div>
                 {% endfor %}
         </div>
     </div>
@@ -80,13 +80,28 @@ $.get('/gallery', function(data) {
 
         ret.then( function(result) {
             let results_squeezed = [];
+            let labels = [];
+            let flash_frames = [];
             for(var i = 0; i < result.length; i++){
                 results_squeezed.push(result[i][0]);
+                labels.push(result[i][0].label);
+                flash_frames.push(result[i][0].flash_frame);
             }
-            viewer.load(results_squeezed);
+            viewer.load(results_squeezed, null, labels, flash_frames);
         })
 	.then(viewer.serve());
 
+        for(var i = 0; i < {{ num }}; i ++ ){
+             if(i % 2 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid red";}
+             if( (i + 1) % 2 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid blue";
+             }
+        }
+
+     
 });
 </script>
 

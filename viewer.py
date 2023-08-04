@@ -20,7 +20,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--dataset_name', default='poses.npy')
     parser.add_argument('-p', '--port', type=int, default=9000)
-
+    parser.add_argument('-c', '--camloc', type=float, default=6.0)
     parser.add_argument('--allow_upload', action='store_true')
     return parser.parse_args()
 
@@ -32,6 +32,21 @@ class Dataset:
         for i in range(self.samples_np.shape[0]):
             self.samples.append(self.samples_np[i])
 
+        self.edit_names = []
+        with open("../edit_names.txt", "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                self.edit_names.append(line)
+        
+        self.labels = []
+        '''
+        print("../" + data_dir + "_labels.txt")
+        if os.path.exists(data_dir + "_labels.txt"):
+            with open( data_dir + "_labels.txt", "r") as f:
+                lines = f.readlines()
+                for line in lines:
+                    self.labels.append(line)
+        '''
     def get(self,id):
         return self.samples[id]
     
@@ -66,7 +81,16 @@ def build_app(args):
     def get_seq( id):
         id = int(id)
         seq = dataset.get_sequence(id)
-        return jsonify( [{"pose": seq["pose"], "root": seq["root"], "id": id}])
+        label = "label" #dataset.edit_names[ id % 16 ] 
+        flash_frame = -1
+        if len(dataset.labels) > 0:
+            label = dataset.labels[id]
+            flash_frame = -1 #label.split()
+            #if(len(flash_frame) == 4):
+            #    flash_frame = int(flash_frame[3])
+            #else:
+            #    flash_frame = -1
+        return jsonify( [{"pose": seq["pose"], "root": seq["root"], "id": id, "label": label, "flash_frame": flash_frame}])
 
     @app.route('/view/sequence/<id>')
     def view_data(id):
@@ -76,12 +100,22 @@ def build_app(args):
     @app.route('/gallery')
     def gallery():
         print(dataset.length)
-        return render_template("gallery.html", num=dataset.length)
+        return render_template("gallery.html", num=dataset.length, camloc = args.camloc)
+
+    @app.route('/edit')
+    def edit():
+        print(dataset.length)
+        return render_template("anim_edit.html", num=dataset.length, camloc = args.camloc)
+
+    @app.route('/pose_gallery')
+    def pose_gallery():
+        print(dataset.length)
+        return render_template("pose_gallery.html", num=dataset.length, camloc = args.camloc)
 
     @app.route('/gallery_viewer')
     def gallery_viewer():
         print(dataset.length)
-        return render_template("gallery_viewer.html", num=dataset.length)
+        return render_template("gallery_viewer.html", num=dataset.length, camloc = args.camloc)
 
     return app
 

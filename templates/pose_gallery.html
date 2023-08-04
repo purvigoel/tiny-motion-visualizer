@@ -7,6 +7,7 @@
 
     <hr>
     <div class="container">
+        <p> <span style="color:red">Input Motion</span> &emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<span style="color:orange">optim IK</span> &emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<span style="color:purple">diffusion cleanup </span> &emsp;&emsp; &emsp;&emsp;&emsp;<span style="color:blue">Final</span></p>
     </div>
 
     <hr>
@@ -87,6 +88,22 @@ $.get('/gallery', function(data) {
         })
 	.then(viewer.serve());
 
+        for(var i = 0; i < {{ num }}; i ++ ){
+             if(i % 4 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid red";}
+             else if( (i + 1) % 4 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid blue";
+             } 
+             else if ( i % 2 == 0){
+                 document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid purple"
+             } else if (i % 2 == 1) {
+                  document.getElementById(i.toString()).style.borderColor = "red";
+                 document.getElementById(i.toString()).style.border = "thin solid orange"
+             }
+        }
 });
 </script>
 

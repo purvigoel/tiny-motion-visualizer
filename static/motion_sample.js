@@ -114,7 +114,7 @@ var floorMesh = function( distance , a, b, color, stickRadius, texture)
     const { x:ax, y:ay, z:az } = a
 	const { x:bx, y:by, z:bz } = b
     // Translate oriented stick to location between endpoints
-    cylinder.translate((bx+ax)/2, (bz + az) / 2, (by+ay)/2);
+    cylinder.translate((bx+ax)/2, -1, (by+ay)/2);
     const material = new THREE.MeshBasicMaterial()
 
     const mesh = new THREE.Mesh(cylinder, material);
@@ -364,6 +364,7 @@ export class MotionSample {
 		this.pause_on_frame = pause_on_frame;
 		this.add = [];
 		this.delete = [];
+                this.label = "";
 		this.roots = root;
 		this.pairs = [];
 		this.ims = [];
@@ -378,7 +379,7 @@ export class MotionSample {
 		this.color = "";
 		this.c = 1;
 		this.add_test = [];
-
+                this.flash_frame = -1;
 	}
 
 	copy() {
@@ -389,7 +390,9 @@ export class MotionSample {
 		n.pause = this.pause;
 		n.roots = this.roots;
 		n.pause_on_frame = this.pause_on_frame;
-		return n;
+	        n.label = this.label;
+                n.flash_frame = this.flash_frame;
+        	return n;
 	}
 
 	clear_ims(){
@@ -434,7 +437,7 @@ export class MotionSample {
 		this.centerx = (minx + maxx) / 2;
 		this.centery = (miny + maxy) / 2;
 		this.centerz = (minz + maxz) / 2;
-	        console.log(this.joints)
+	        //console.log(this.joints)
         }
 
 	make_human(spheres, pairs, color, opacity, use_basic_material) {
@@ -681,6 +684,7 @@ export class MotionSample {
                         }
                 }
             var cylinder = cylinderMesh(spheres[ind0].position, spheres[ind1].position, tmpcolor, 0.01, opacity, use_basic_material);
+             cylinder.limb_color = tmpcolor;
              spheres.push(cylinder);
              this.groups[0].add(cylinder);           
         }
@@ -746,7 +750,7 @@ export class MotionSample {
 		var body_index = 0;
 		for(var i = 0; i < this.joints_per_pose; i++){
                                body[body_index].position.set(this.joints[frame][i][0], this.joints[frame][i][1], this.joints[frame][i][2]);
-			body_index += 1;
+	  		body_index += 1;
 		}
                 
                 for(var j = 0; j < pairs.length; j++){
@@ -758,6 +762,15 @@ export class MotionSample {
 		// 	if(ind0 == 0  || ind1 == 0){
 		// 		continue;
 		// 	}
+                        //if(frame == 0){
+                        //    body[body_index].material.color.set("red");
+                        //} else if(frame == this.flash_frame){
+                        //    body[body_index].material.color.set("blue");
+                        //} else {
+                        //    body[body_index].material.color.set(body[body_index].limb_color);
+                        //}
+
+                       
 
 		 	body[body_index] = cylinderMesh_quaternion(body[ind0].position, body[ind1].position, body[body_index]);
 		 	body_index += 1;	

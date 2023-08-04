@@ -30,7 +30,7 @@
     <div class="container">
         <div style="position:absolute; width:80%; height:120%; display: block;" id = "explore">
                 {% for i in range(0, num) %}
-                    <div style="position:absolute; top:100px" id = "{{ i }}"> </div>
+                    <div style="position:absolute; top:100px" id = "{{ i }}"> {{ i }} </div>
                 {% endfor %}
         </div>
     </div>
@@ -62,7 +62,7 @@ import {Viewer} from "/static/viewer.js";
 $.get('/gallery', function(data) {
 	var viewer = new Viewer();
 
-	viewer.set_up_scene_visual(false);
+	viewer.set_up_scene_visual(false, {{ camloc }});
         viewer.set_up_data();
 
 	var sample_names = [];

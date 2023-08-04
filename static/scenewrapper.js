@@ -98,7 +98,8 @@ export class SceneWrapper {
 
 		
 			motion_sample.joints_to_objects_vis(this.skeleton_radius, this.pairs, this.skeleton_color);
-			this.visible_samples.push(motion_sample);
+                        motion_sample.label = "hello"
+                        this.visible_samples.push(motion_sample);
 			
 			this.samples.push(motion_sample);
 			
@@ -108,13 +109,14 @@ export class SceneWrapper {
 		return {"frames": bytes[0], "joints": joints}
 	}
 
-	data_to_joints(pose, numsamples, gallery, name_to_frame){
+	data_to_joints(pose, numsamples, gallery, name_to_frame, labels, flash_frames){
 		var counter = 0;
                 //var frames = pose.length;
 		var jointnum = pose[0].pose[0].length;
                 console.log("numsamples:" + numsamples)
                 console.log(pose.length)
-	        console.log("jointnum:" + jointnum)	
+	        console.log("jointnum:" + jointnum)
+                console.log(flash_frames)	
                 for (var j = 0; j < numsamples; j++){
 	 		var frames = pose[j].pose.length;
 			var joints = pose[j].pose;
@@ -144,7 +146,15 @@ export class SceneWrapper {
 				motion_sample.pause = true;
 				motion_sample.pause_on_frame = pause_on_frame;
 			}
-
+                        if(labels == null){
+  				var label = "";
+			} else {
+				var label = labels[j];
+			}
+                        if(flash_frames != null){
+                               motion_sample.flash_frame = flash_frames[j];
+                        }
+                        motion_sample.label = label;
 			this.visible_samples.push(motion_sample);
 			
 			this.samples.push(motion_sample);
@@ -162,8 +172,8 @@ export class SceneWrapper {
 		var motion_samples = global.bytes_to_joints(bn_file, numsamples, gallery, show_sample);
 	}
 
-	make_motion_sample(global, data, numsamples, gallery, show_sample){
-		global.data_to_joints(data, data.length, gallery, show_sample);
+	make_motion_sample(global, data, numsamples, gallery, show_sample, labels, flash_frames){
+		global.data_to_joints(data, data.length, gallery, show_sample, labels, flash_frames);
 	}
 
 	hide(){
