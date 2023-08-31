@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - loaders - OBJ loader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	</head>
+
+	<body>
+		<div id="info">
+		<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - OBJLoader test
+		</div>
+
+		<!-- Import maps polyfill -->
+		<!-- Remove this when import maps will be widely supported -->
+		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+                <script type="importmap">
+        {
+            "imports": {
+                "three": "https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three/examples/jsm/",
+                "SelectionBox": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionBox.js",
+                "SelectionHelper": "https://unpkg.com/three@0.138.0/examples/jsm/interactive/SelectionHelper.js",
+                "FirstPersonControls": "https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/controls/FirstPersonControls.js",
+                "dat.gui": "https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js"
+		}
+        }
+</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+
+			import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { ImprovedNoise } from 'https://cdn.skypack.dev/three@0.133.1/examples/jsm/math/ImprovedNoise.js';
+			let camera, scene, renderer;
+			let noise = new ImprovedNoise();
+			let object;
+			let controls;
+
+			init();
+ 			function load(manager, i, onProgress, onError){
+				const loader = new OBJLoader( manager );
+                                        loader.load( 'meshes/' + i.toString() + '.obj', function ( obj ) {
+                                            object = obj;
+					    object.userData.x = i * 0.05;
+                                            objects[i] = object;
+                                            
+                                        }, onProgress, onError );
+			}
+
+
+			function init() {
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 20 );
+				camera.position.z = 2.5;
+
+				// scene
+
+				scene = new THREE.Scene();
+
+				const pointLight = new THREE.PointLight( 0xffffff, 1 );
+				camera.add( pointLight );
+				scene.add( camera );
+
+				// manager
+
+				function loadModel() {
+                                        const material = new THREE.MeshLambertMaterial()
+					object.traverse( function ( child ) {
+  					    child.material = material;
+
+					} );
+
+					object.position.x = object.userData.x;
+                                        object.scale.setScalar( 1 );
+					scene.add( object );
+					console.log(object)
+					animate();
+					//render();
+
+				}
+
+				const manager = new THREE.LoadingManager( loadModel );
+
+				// texture
+
+				// model
+
+				function onProgress( xhr ) {
+
+					if ( xhr.lengthComputable ) {
+
+						const percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( 'model ' + Math.round( percentComplete, 2 ) + '% downloaded' );
+
+					}
+
+				}
+
+				function onError() {}
+                         	load(manager, 0, onProgress, onError)
+
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+
+				//
+
+				controls = new  OrbitControls( camera, renderer.domElement );
+				controls.minDistance = 2;
+				controls.maxDistance = 5;
+				controls.addEventListener( 'change', render );
+				//
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+                                console.log(objects, scene.children.length)
+			}
+			let t = 0;
+                        function animate() { 
+ 			    requestAnimationFrame( animate ); 
+			    object.rotation.x += 0.00; 
+			    const positionAttribute = object.children[0].geometry.getAttribute("position");
+			    const vertex = new THREE.Vector3();
+			    for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex ++) {
+				vertex.fromBufferAttribute(positionAttribute, vertexIndex);
+			    	let ns = noise.noise(vertex.x + t, vertex.y + t, vertex.z + t) * 0.1 ;
+				positionAttribute.setXYZ(vertexIndex, vertex.x + ns, vertex.y + ns, vertex.z + ns);
+			    }
+			    t += 1;
+			    positionAttribute.needsUpdate = true;
+			    renderer.render(scene, camera); 
+			    controls.update(); 
+			}
+
+		</script>
+
+	</body>
+</html>

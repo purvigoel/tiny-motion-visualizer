@@ -39,14 +39,14 @@ class Dataset:
                 self.edit_names.append(line)
         
         self.labels = []
-        '''
+                     
         print("../" + data_dir + "_labels.txt")
         if os.path.exists(data_dir + "_labels.txt"):
             with open( data_dir + "_labels.txt", "r") as f:
                 lines = f.readlines()
                 for line in lines:
                     self.labels.append(line)
-        '''
+        
     def get(self,id):
         return self.samples[id]
     
