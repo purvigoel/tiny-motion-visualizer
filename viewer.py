@@ -32,6 +32,10 @@ class Dataset:
         for i in range(self.samples_np.shape[0]):
             self.samples.append(self.samples_np[i])
 
+        self.meshes_np = np.fromfile("../meshdiff.bn", dtype=np.float32).tolist()
+        print("len", len(self.meshes_np))
+        self.meshes = []
+
         self.edit_names = []
         with open("../edit_names.txt", "r") as f:
             lines = f.readlines()
@@ -40,20 +44,20 @@ class Dataset:
         
         self.labels = []
                      
-        print("../" + data_dir + "_labels.txt")
+        print(data_dir + "_labels.txt")
         if os.path.exists(data_dir + "_labels.txt"):
             with open( data_dir + "_labels.txt", "r") as f:
                 lines = f.readlines()
                 for line in lines:
                     self.labels.append(line)
-        
+
     def get(self,id):
         return self.samples[id]
     
     def get_sequence(self, id, splice=False):
         seq = self.samples[int(id)]
-
         root_fake = np.zeros((self.samples_np.shape[1], 3))
+        
         return {"pose": seq.tolist(), "root": root_fake.tolist()}
 
 def build_app(args):
@@ -81,7 +85,7 @@ def build_app(args):
     def get_seq( id):
         id = int(id)
         seq = dataset.get_sequence(id)
-        label = "label" #dataset.edit_names[ id % 16 ] 
+        label = id #dataset.edit_names[ id % 16 ] 
         flash_frame = -1
         if len(dataset.labels) > 0:
             label = dataset.labels[id]
@@ -105,7 +109,7 @@ def build_app(args):
     @app.route('/edit')
     def edit():
         print(dataset.length)
-        return render_template("anim_edit.html", num=dataset.length, camloc = args.camloc)
+        return render_template("anim_edit.html", num=dataset.length, camloc = args.camloc, diffs=1)
 
     @app.route('/pose_gallery')
     def pose_gallery():

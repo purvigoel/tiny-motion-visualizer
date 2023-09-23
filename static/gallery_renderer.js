@@ -1,17 +1,17 @@
 import * as THREE from 'three';
 import { FirstPersonControls } from 'FirstPersonControls';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+//import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 
-import { EffectComposer } from 'three/addons/postprocessing//EffectComposer.js';
+//import { EffectComposer } from 'three/addons/postprocessing//EffectComposer.js';
 
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+//import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+//import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 
-import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
+//import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 
-import { CopyShader } from 'three/addons/shaders/CopyShader.js';
+//import { CopyShader } from 'three/addons/shaders/CopyShader.js';
 
 export class GalleryRenderer {
 	constructor(div_attr, sample_attr, camloc) {
@@ -41,7 +41,6 @@ export class GalleryRenderer {
 
 	      			sample.step(pause);
 			        var curr_frame = sample.counter;
-
 					for(var k =0; k < sample.add.length; k++){
 						scene.add(sample.add[k]);
 					}
@@ -144,10 +143,17 @@ export class GalleryRenderer {
 		motion_sample.pause = render_info.pause;
 		return motion_sample;
 	}
+	
+	get_mesh_sample_objs(mesh_sample, render_info) {
+		mesh_sample.joints_to_objects_vis(this.skeleton_radius,
+                 this.pairs, render_info.color, render_info.opacity, render_info.use_basic_material);
+		return mesh_sample;
+        }
 
 	show(all_motion_samples, render_info){
 		for(var i = 0; i < all_motion_samples.length; i++){
-			var motion_sample = this.get_motion_sample_objs(all_motion_samples[i].sample, render_info[i]);
+			//var motion_sample = this.get_motion_sample_objs(all_motion_samples[i].sample, render_info[i]);
+			var motion_sample = this.get_mesh_sample_objs(all_motion_samples[i].sample, render_info[i]);
 			this.visible_samples.push(motion_sample);
 		}
 		
@@ -251,16 +257,26 @@ export class GalleryRenderer {
             controls.update();
 
 	    {
+	
 	      const color = 0xFFFFFF;
 	      const intensity = 1;
 	      const light = new THREE.DirectionalLight(color, intensity);
 	      light.position.set(-1, 2, -4);
 	      scene.add(light);
-	    }
+ 
+              const light2 = new THREE.DirectionalLight(color, intensity);
+              light2.position.set(-1, 2, 4);
+              scene.add(light2);
+
+              const light3 = new THREE.DirectionalLight(color, intensity);
+              light3.position.set(10, 0.5, 0);
+              scene.add(light3);
+	
+	 }
 
 	    const rect = elem.getBoundingClientRect();
 	    const {left, right, top, bottom, width, height} = rect;
-	    var composer = this.make_composer(this.renderer, scene, camera, width, height); 
+	    var composer = null;// this.make_composer(this.renderer, scene, camera, width, height); 
 	    return {scene, camera, controls, composer};
 	}
 }

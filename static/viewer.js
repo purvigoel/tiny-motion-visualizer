@@ -59,10 +59,10 @@ set_up_data(){
 
 }
 
-load(data, name_to_frames, labels, flash_frames) {
+load(data, name_to_frames, labels, flash_frames, mesh_diffs) {
         console.log(data, name_to_frames, flash_frames)
 	this.name_to_frames = name_to_frames;
-        scenewrapper.make_motion_sample(scenewrapper, data, numvis, visual_explorer_gallery, name_to_frames, labels, flash_frames);
+        scenewrapper.make_motion_sample(scenewrapper, data, numvis, visual_explorer_gallery, name_to_frames, labels, flash_frames, mesh_diffs);
 }
 
 log_spacebar() {

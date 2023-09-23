@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+//import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 
-import { EffectComposer } from 'three/addons/postprocessing//EffectComposer.js';
+//import { EffectComposer } from 'three/addons/postprocessing//EffectComposer.js';
 
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+//import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
-import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+//import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 
-import { CopyShader } from 'three/addons/shaders/CopyShader.js';
+//import { CopyShader } from 'three/addons/shaders/CopyShader.js';
 
 export class ThreeWrapper {
 	constructor(width, height){

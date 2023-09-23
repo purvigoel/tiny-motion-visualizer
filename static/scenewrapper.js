@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {readBinaryFile} from "./filehandler.js";
 import {MotionSample} from "./motion_sample.js";
 import {ThreeWrapper} from "./threewrapper.js";
+import {MeshSample} from "./mesh_sample.js";
 
 export class SceneWrapper {
 	constructor(width, height, numvis, frames, threewrapper){
@@ -18,6 +19,7 @@ export class SceneWrapper {
 		this.mouse = {x : 0, y : 0};
 		this.numsamples = 0;
 		this.samples = [];
+		this.mesh_samples = [];
 		this.visible_samples = [];
 		this.drawn = false;
 
@@ -109,7 +111,7 @@ export class SceneWrapper {
 		return {"frames": bytes[0], "joints": joints}
 	}
 
-	data_to_joints(pose, numsamples, gallery, name_to_frame, labels, flash_frames){
+	data_to_joints(pose, numsamples, gallery, name_to_frame, labels, flash_frames, mesh_diffs){
 		var counter = 0;
                 //var frames = pose.length;
 		var jointnum = pose[0].pose[0].length;
@@ -138,8 +140,12 @@ export class SceneWrapper {
 			
 			this.numsamples += 1;
 
-		
-			motion_sample.joints_to_objects_vis(this.skeleton_radius, this.pairs, this.skeleton_color);
+			if (!mesh_diffs){
+			    motion_sample.joints_to_objects_vis(this.skeleton_radius, this.pairs, this.skeleton_color);
+			} else {
+			    var mesh_sample = new MeshSample(pose[j].id, j, frames, joints, -1, pose[j].root, mesh_diffs);
+			}
+	
 			if(name_to_frame){
 				var pause_on_frame = name_to_frame[pose[j].id];
 				motion_sample.counter = pause_on_frame;
@@ -156,12 +162,18 @@ export class SceneWrapper {
                         }
                         motion_sample.label = label;
 			this.visible_samples.push(motion_sample);
-			
 			this.samples.push(motion_sample);
-			
+			if (mesh_diffs){
+			    mesh_sample.label = label;
+			    this.mesh_samples.push(mesh_sample);
+			}
 		}
 		gallery.samples = this.samples;
-		gallery.show_canvas();
+
+		if( mesh_diffs) {
+                	gallery.meshes = this.mesh_samples;
+		}
+		gallery.show_canvas(mesh_diffs);
 		if(name_to_frame){
 			gallery.pause = true;
 		}
@@ -172,8 +184,8 @@ export class SceneWrapper {
 		var motion_samples = global.bytes_to_joints(bn_file, numsamples, gallery, show_sample);
 	}
 
-	make_motion_sample(global, data, numsamples, gallery, show_sample, labels, flash_frames){
-		global.data_to_joints(data, data.length, gallery, show_sample, labels, flash_frames);
+	make_motion_sample(global, data, numsamples, gallery, show_sample, labels, flash_frames, mesh_diffs){
+		global.data_to_joints(data, data.length, gallery, show_sample, labels, flash_frames, mesh_diffs);
 	}
 
 	hide(){

@@ -81,10 +81,13 @@ $.get('/gallery', function(data) {
 
         ret.then( function(result) {
             let results_squeezed = [];
+            let labels = [];
             for(var i = 0; i < result.length; i++){
                 results_squeezed.push(result[i][0]);
+                labels.push(result[i][0].label);
             }
-            viewer.load(results_squeezed);
+            viewer.load(results_squeezed, null, labels);
+
         })
 	.then(viewer.serve());
 

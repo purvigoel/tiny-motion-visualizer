@@ -10,6 +10,7 @@ export class VisualExplorer_Gallery {
 		this.div = document.getElementById("explore");
 		this.gallery_renderer = new GalleryRenderer("explore-gallery", camloc);
 		this.samples = [];
+		this.meshes = [];
 	}
 	
 	restart() {
@@ -65,7 +66,11 @@ export class VisualExplorer_Gallery {
 
 	show(show_sample) {
 		console.log("show")
-                var samples = this.samples;
+		if(!show_sample){
+                	var samples = this.samples;
+		} else {
+			var samples = this.meshes;
+		}
 		var width = 125;
 		var height = 175;
 		var cols = 4;
@@ -76,13 +81,7 @@ export class VisualExplorer_Gallery {
 		var divs = [];
 		var render_info = [];
                 this.gallery_renderer.camloc = this.camloc;
-		//var total = samples.length
-		//total = Math.min(total, 16);
-		//var gallery_rows = Math.ceil(Math.sqrt(total));
-		//if(total == 1){
-		//	gallery_rows = 1;
-		//}
-		//cols = gallery_rows;
+
 		if(this.is_single){
 			var width_dynamic = document.getElementById("explore").offsetWidth * 0.75 / gallery_rows;
 			var height_dynamic = document.getElementById("explore").offsetHeight* 0.75 / gallery_rows;
@@ -98,28 +97,26 @@ export class VisualExplorer_Gallery {
 		paddingx_dynamic = 10;
 		paddingy_dynamic = 10;
 		for(var j = 0; j < samples.length; j++) {
-
 			var sample = samples[j];
 			
 			var row = Math.floor( counter / cols);
 			var col = counter % cols;
 
 			if(samples.length == 1){
-			var div = this.add_class_panel( (width_dynamic + paddingx_dynamic) * col, 
+    			    var div = this.add_class_panel( (width_dynamic + paddingx_dynamic) * col, 
 				(height_dynamic + paddingy_dynamic) * row, 
 				width_dynamic, height_dynamic, 
 				20, 5, paddingy_dynamic, paddingx_dynamic,
 				sample);
 			} else {
-				console.log(sample.file)
 				var div = this.add_gallery_panel(document.getElementById(sample.file), (width_dynamic + paddingx_dynamic) * col,
                                 (height_dynamic + paddingy_dynamic) * row,
                                 width_dynamic, height_dynamic,
                                 20, 5, paddingy_dynamic, paddingx_dynamic,
                                 sample, j);
 			}
+			div.innerText = "";
 			counter += 1;
-
 			divs.push(div);
 			render_info.push({use_basic_material: true, color: "blue", pause:false, opacity: 1.0})
 		}
